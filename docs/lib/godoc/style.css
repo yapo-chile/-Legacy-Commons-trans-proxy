@@ -260,8 +260,8 @@ div#menu {
 	padding: 10px;
 	white-space: nowrap;
 	max-height: 0;
-	-moz-trans-proxyition: max-height .25s linear;
-	trans-proxyition: max-height .25s linear;
+	-moz-transition: max-height .25s linear;
+	transition: max-height .25s linear;
 	width: 100%;
 }
 div#menu.menu-visible {
@@ -331,7 +331,7 @@ input#search + button svg {
 	display: inline-block;
 }
 .vertical-flip {
-	trans-proxyform: rotate(-180deg);
+	transform: rotate(-180deg);
 }
 
 div.left {
@@ -648,7 +648,7 @@ div#playground .output {
         padding: 0;
         background: none;
         border: none;
-	outline: 0px solid trans-proxyparent;
+	outline: 0px solid transparent;
         overflow: auto;
 }
 #content .playground .number, #content .code .number {

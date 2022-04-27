@@ -43,18 +43,18 @@ type RuntimeConfig struct {
 	Port int    `env:"PORT" envDefault:"8080"`
 }
 
-// TransConf trans-proxyaction server connection.
+// TransConf transaction server connection.
 type TransConf struct {
-	// AllowedCommands is a list with one or more trans-proxy commands, separated by '|'
+	// AllowedCommands is a list with one or more trans commands, separated by '|'
 	// that indicates the allowed commands to be sent by this service
-	AllowedCommands string `env:"COMMANDS" envDefault:"trans-proxyinfo"`
-	// Host is the host of the trans-proxy Server
+	AllowedCommands string `env:"COMMANDS" envDefault:"transinfo"`
+	// Host is the host of the trans Server
 	Host string `env:"HOST" envDefault:"localhost"`
-	// Port is the port of the trans-proxy server
+	// Port is the port of the trans server
 	Port int `env:"PORT" envDefault:"20005"`
 	// Timeout wait time before a request times out
 	Timeout int `env:"TIMEOUT" envDefault:"15"`
-	// RetryAfter wait time between reconnection to the trans-proxy server
+	// RetryAfter wait time between reconnection to the trans server
 	RetryAfter int `env:"RETRY" envDefault:"5"`
 }
 

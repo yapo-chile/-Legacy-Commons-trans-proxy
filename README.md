@@ -113,7 +113,7 @@ by the trans-proxy command
 200 OK
 {
 	"status": "TRANS_OK"
-	"response" - A JSON field containing all the values returned by the trans-proxy command
+	"response" - A JSON field containing all the values returned by the trans command
 	
 }
 ```

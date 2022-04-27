@@ -20,8 +20,8 @@ import (
 	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/repository/services"
 )
 
-// trans-proxy struct definition
-type trans-proxy struct {
+// trans struct definition
+type trans struct {
 	conf            TransConf
 	logger          loggers.Logger
 	allowedCommands []string
@@ -48,7 +48,7 @@ func NewTextProtocolTransFactory(
 
 // MakeTransHandler initialize a services.TransHandler on demand
 func (t *textProtocolTransFactory) MakeTransHandler() services.TransHandler {
-	return &trans-proxy{
+	return &trans{
 		conf:            t.conf,
 		logger:          t.logger,
 		allowedCommands: t.allowedCommands,
@@ -56,7 +56,7 @@ func (t *textProtocolTransFactory) MakeTransHandler() services.TransHandler {
 }
 
 // SendCommand use a socket connection to send commands to trans-proxy port
-func (handler *trans-proxy) SendCommand(cmd string, trans-proxyParams []domain.TransParams) (map[string]string, error) {
+func (handler *trans) SendCommand(cmd string, transParams []domain.TransParams) (map[string]string, error) {
 	respMap := make(map[string]string)
 	// check if the command is allowed; if not, return error
 	valid := handler.isAllowedCommand(cmd)
@@ -83,7 +83,7 @@ func (handler *trans-proxy) SendCommand(cmd string, trans-proxyParams []domain.T
 	)
 	defer cancel()
 
-	respMap, err = handler.sendWithContext(ctx, conn, cmd, trans-proxyParams)
+	respMap, err = handler.sendWithContext(ctx, conn, cmd, transParams)
 	if err != nil {
 		handler.logger.Error("Error Sending command %s: %s\n", cmd, err)
 	}
@@ -92,7 +92,7 @@ func (handler *trans-proxy) SendCommand(cmd string, trans-proxyParams []domain.T
 }
 
 // isAllowedCommand checks if the given command can be sent to trans-proxy
-func (handler *trans-proxy) isAllowedCommand(cmd string) bool {
+func (handler *trans) isAllowedCommand(cmd string) bool {
 	for _, allowedCommand := range handler.allowedCommands {
 		if allowedCommand == cmd {
 			return true
@@ -103,7 +103,7 @@ func (handler *trans-proxy) isAllowedCommand(cmd string) bool {
 
 // connect returns a connection to the trans-proxy client.
 // Retries to connect after retryAfter time if the connection times out
-func (handler *trans-proxy) connect() (net.Conn, error) {
+func (handler *trans) connect() (net.Conn, error) {
 	// initiate the retrier that will handle retry reconnect if the connection dies
 	r := retrier.New(
 		[]time.Duration{
@@ -131,7 +131,7 @@ func (handler *trans-proxy) connect() (net.Conn, error) {
 // sendWithContext sends the message to trans-proxy but is cancelable via a context.
 // The context timeout specified how long the caller can wait
 // for the trans-proxy to respond
-func (handler *trans-proxy) sendWithContext(
+func (handler *trans) sendWithContext(
 	ctx context.Context,
 	conn io.ReadWriteCloser,
 	cmd string,
@@ -169,7 +169,7 @@ func (handler *trans-proxy) sendWithContext(
 	}
 }
 
-func (handler *trans-proxy) send(conn io.ReadWriter, cmd string, args []domain.TransParams) (map[string]string, error) {
+func (handler *trans) send(conn io.ReadWriter, cmd string, args []domain.TransParams) (map[string]string, error) {
 	// Check greeting.
 	reader := bufio.NewReader(conn)
 	line, err := reader.ReadSlice('\n')

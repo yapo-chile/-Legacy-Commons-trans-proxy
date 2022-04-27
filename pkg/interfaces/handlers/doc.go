@@ -2,7 +2,7 @@
 Package handlers groups together all the code that talks to the World Wide Web.
 Here we can decode/encode JSON requests over HTTP, read URL parameters, check
 credentials for authorization, read/modify http headers. That information must
-be trans-proxyformed into business language in order to call the inner layers.
+be transformed into business language in order to call the inner layers.
 
 What lives here
 

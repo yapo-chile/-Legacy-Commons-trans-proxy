@@ -7,13 +7,13 @@ import (
 	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
 )
 
-// TransOK Status returned when a trans-proxy command executes successfully
+// TransOK Status returned when a trans command executes successfully
 const TransOK = "TRANS_OK"
 
-// TransError Error while executing a trans-proxy error
+// TransError Error while executing a trans error
 const TransError = "TRANS_ERROR"
 
-// TransDatabaseError Error while executing a database request inside a trans-proxy
+// TransDatabaseError Error while executing a database request inside a trans
 const TransDatabaseError = "TRANS_DATABASE_ERROR"
 
 // TransNoCommand Error when the provided command doesn't exists
@@ -59,8 +59,8 @@ func (interactor TransInteractor) ExecuteCommand(
 	if err != nil {
 		// Report the error
 		interactor.Logger.LogRepositoryError(command, err)
-		if trans-proxyErr, ok := response.Params["error"]; ok {
-			err = fmt.Errorf(trans-proxyErr)
+		if transErr, ok := response.Params["error"]; ok {
+			err = fmt.Errorf(transErr)
 		} else {
 			err = fmt.Errorf("error during execution")
 		}

@@ -38,7 +38,7 @@ func TestNewTransRepo(t *testing.T) {
 	repo := NewTransRepo(&factory)
 
 	expectedRepo := &TransRepo{
-		trans-proxyFactory: &factory,
+		transFactory: &factory,
 	}
 	assert.Equal(t, expectedRepo, repo)
 	factory.AssertExpectations(t)
@@ -47,7 +47,7 @@ func TestNewTransRepo(t *testing.T) {
 func TestExecuteError(t *testing.T) {
 	cmd := command1
 	params := []domain.TransParams{}
-	expectedErr := errors.New("trans-proxy error")
+	expectedErr := errors.New("trans error")
 	responseParams := make(map[string]string)
 
 	command := domain.TransCommand{
@@ -67,7 +67,7 @@ func TestExecuteError(t *testing.T) {
 	expectedResponse := domain.TransResponse{
 		Params: make(map[string]string),
 	}
-	expectedResponse.Params["error"] = "trans-proxy error"
+	expectedResponse.Params["error"] = "trans error"
 	assert.Equal(t, expectedErr, err)
 	assert.Equal(t, expectedResponse, response)
 	factory.AssertExpectations(t)

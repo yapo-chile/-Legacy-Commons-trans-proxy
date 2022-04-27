@@ -18,17 +18,17 @@ const (
 )
 
 func TestIsAllowedCommand(t *testing.T) {
-	trans-proxyHandler := trans-proxy{
-		allowedCommands: []string{"trans-proxyinfo", "get_account", "newad"},
+	transHandler := trans{
+		allowedCommands: []string{"transinfo", "get_account", "newad"},
 	}
 
-	assert.True(t, trans-proxyHandler.isAllowedCommand("trans-proxyinfo"))
-	assert.False(t, trans-proxyHandler.isAllowedCommand("loadad"))
-	assert.True(t, trans-proxyHandler.isAllowedCommand("get_account"))
-	assert.False(t, trans-proxyHandler.isAllowedCommand("Get_account"))
-	assert.False(t, trans-proxyHandler.isAllowedCommand("newAd"))
-	assert.False(t, trans-proxyHandler.isAllowedCommand("newad:"))
-	assert.True(t, trans-proxyHandler.isAllowedCommand("newad"))
+	assert.True(t, transHandler.isAllowedCommand("transinfo"))
+	assert.False(t, transHandler.isAllowedCommand("loadad"))
+	assert.True(t, transHandler.isAllowedCommand("get_account"))
+	assert.False(t, transHandler.isAllowedCommand("Get_account"))
+	assert.False(t, transHandler.isAllowedCommand("newAd"))
+	assert.False(t, transHandler.isAllowedCommand("newad:"))
+	assert.True(t, transHandler.isAllowedCommand("newad"))
 }
 
 func TestSendCommandInvalidCommand(t *testing.T) {
@@ -46,7 +46,7 @@ func TestSendCommandInvalidCommand(t *testing.T) {
 	logger.On("Error")
 	expectedResponse := map[string]string{}
 	expectedResponse["error"] = "Invalid Command. Valid commands: [test]"
-	cmd := "trans-proxyinfo"
+	cmd := "transinfo"
 	params := []domain.TransParams{
 		{
 			Key:   "param1",
@@ -54,10 +54,10 @@ func TestSendCommandInvalidCommand(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
 
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.Error(t, err)
 	assert.Equal(t, expectedResponse, resp)
 	logger.AssertExpectations(t)
@@ -98,9 +98,9 @@ func TestSendCommandTimeout(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.Error(t, err)
 	assert.Equal(t, expectedResponse, resp)
 	logger.AssertExpectations(t)
@@ -132,10 +132,10 @@ func TestSendCommandBusyServer(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
 
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.Error(t, err)
 	assert.Equal(t, expectedResponse, resp)
 	logger.AssertExpectations(t)
@@ -174,10 +174,10 @@ func TestSendCommandOK(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
 
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResponse, resp)
 	logger.AssertExpectations(t)
@@ -217,10 +217,10 @@ func TestSendCommandBlobOK(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
 
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedResponse, resp)
 	logger.AssertExpectations(t)
@@ -253,10 +253,10 @@ func TestISO8859Input(t *testing.T) {
 		},
 	}
 
-	trans-proxyFactory := NewTextProtocolTransFactory(conf, &logger)
-	trans-proxyHandler := trans-proxyFactory.MakeTransHandler()
+	transFactory := NewTextProtocolTransFactory(conf, &logger)
+	transHandler := transFactory.MakeTransHandler()
 
-	resp, err := trans-proxyHandler.SendCommand(cmd, params)
+	resp, err := transHandler.SendCommand(cmd, params)
 	assert.NoError(t, err)
 	assert.Equal(t, map[string]string{}, resp)
 	logger.AssertExpectations(t)

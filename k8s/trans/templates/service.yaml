@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "{{ .Values.prometheus.port }}"
+    prometheus.io/scrape: "{{ .Values.prometheus.enabled }}"
+  name: {{ include "trans.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "trans.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.service.prometheus_port }}
+      targetPort: prom
+      protocol: TCP
+      name: prom
+  selector:
+    app.kubernetes.io/name: {{ include "trans.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

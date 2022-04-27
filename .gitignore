@@ -1,0 +1,11 @@
+*.swp
+*.swo
+*.rpm
+*.pid
+.DS_Store
+conf/conf.json
+logs/*
+reports/*
+vendor/*
+app.docker
+goms*

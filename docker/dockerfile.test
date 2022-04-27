@@ -1,0 +1,15 @@
+FROM golang:1.17
+
+ENV TZ America/Santiago
+
+# Copy zoneinfo file and then remove cache
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
+RUN go install github.com/jstemmer/go-junit-report@latest \
+    && go install github.com/axw/gocov/gocov@latest \
+    && go install github.com/AlekSi/gocov-xml@latest \
+    && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+WORKDIR /app
+COPY ./ .
+
+CMD make test-int

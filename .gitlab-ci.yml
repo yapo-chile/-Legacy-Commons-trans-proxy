@@ -1,0 +1,125 @@
+---
+variables:
+  GO_PROJECT: gitlab.com/yapo_team/legacy/sellers/go-ms-account-proxy
+  CHART_DIR: k8s/$CI_PROJECT_NAME
+  CI_JOB_TIMESTAMP: date-tag
+
+include:
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/docker-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+  - project: 'yapo_team/yotf/sre-team/sre-services/ci-templates/helm-pipeline-template'
+    ref: main
+    file: 'gitlab-ci.yml'
+
+
+.set-golang-folders: &set-golang-folders
+  - export GO_PROJECT=${GO_PROJECT}
+  - export CHART_DIR=${CHART_DIR}
+  - export APPNAME=${CI_PROJECT_NAME}
+  - echo ${GOPATH}
+  - echo ${GO_PROJECT}
+# crea el directorio en el workspace de Go
+  - mkdir -p ${GOPATH}/src/${GO_PROJECT}
+# copia todo el contenido de CI_PROJECT_DIR al workspace de Go.
+# CI_PROJECT_DIR es una variable predefinida de GitLab que contiene
+# la ruta donde el repositorio es clonado y donde el job está corriendo
+  - cp -r ${CI_PROJECT_DIR}/* ${GOPATH}/src/${GO_PROJECT}/
+  - cd ${GOPATH}/src/${GO_PROJECT}
+  - pwd
+  - ls -la
+
+.install:
+  image: golang:1.17.0
+  stage: install
+  script:
+    - *set-golang-folders
+    - go mod tidy -compat=1.17
+    - cp ./go.sum $CI_PROJECT_DIR
+    - cp ./go.mod $CI_PROJECT_DIR
+  allow_failure: false
+  artifacts:
+    paths:
+      - go.sum
+      - go.mod
+
+.build:
+  image: golang:1.17.0
+  stage: build
+  script:
+    - *set-golang-folders
+    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o $CI_PROJECT_DIR/app ./cmd/$CI_PROJECT_NAME/main.go
+  allow_failure: false
+  artifacts:
+    paths:
+      - app
+
+.test:
+  image: registry.gitlab.com/yapo_team/yotf/sre-team/sre-services/docker/go-testing:latest
+  stage: test
+  script:
+    - *set-golang-folders
+    - make test
+  allow_failure: false
+
+stages:
+  - install
+  - test
+  - build
+  - build-docker
+  - helm
+  - update-chart
+  - deploy
+
+install:
+  extends: .install
+
+test:
+  extends: .test
+  image: registry.gitlab.com/yapo_team/yotf/sellers/back/go-testing:latest
+
+build:
+  extends: .build
+  only:
+    - dev
+    - pre
+    - main
+
+docker:
+  extends: .docker-push-release
+  only:
+    - dev
+    - pre
+    - main
+
+helm:
+  extends: .helm
+  only:
+    - dev
+    - pre
+    - main
+
+update-chart-dev:
+  extends: .update-chart-dev
+  only:
+    - dev
+
+update-chart-pre:
+  extends: .update-chart-pre
+  only:
+    - pre
+
+update-chart-pro:
+  extends: .update-chart-prod
+  only:
+    - main
+
+deploy-k8s-pre:
+  extends: .deploy-k8s-pre
+  only:
+    - pre
+
+deploy-k8s-pro:
+  extends: .deploy-k8s-prod
+  only:
+    - main

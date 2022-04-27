@@ -1,0 +1,22 @@
+version: '3'
+services:
+  trans:
+    build:
+      args:
+        - APPNAME
+        - MAIN_FILE=cmd/${APPNAME}/main.go
+      context: .
+      dockerfile: docker/dockerfile.dev
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
+    ports:
+     - "${SERVICE_PORT}:8080"
+    volumes:
+      - ./:/app
+    environment:
+      TZ: "America/Santiago"
+      TRANS_HOST: "docker.for.mac.localhost"
+      TRANS_PORT: 20005
+      TRANS_COMMANDS: "transinfo|get_account|newad|clear|loadad|set_ad_evaluation|bump_target_advertisement|bump_ad|set_promotional_page|get_promotional_pages|publish_promotional_page|delete_promotional_page|pro_adreply_report|newad|imgput|deletead|api_stats|get_packs_by_account|get_promo_banners|bconf_get_values|get_promotional_pages|reset_account_password|manage_account|account_associate|create_social_accounts_params|create_account"
+      TRANS_TIMEOUT: "30"
+  
+

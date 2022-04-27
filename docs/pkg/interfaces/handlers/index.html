@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>handlers - The Go Programming Language</title>
+
+<link type="text/css" rel="stylesheet" href="../../../lib/godoc/style.css">
+
+<link rel="stylesheet" href="../../../lib/godoc/jquery.treeview.css">
+<script type="text/javascript">window.initFuncs = [];</script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="http://localhost:30303/">The Go Programming Language</a></div>
+<div class="top-heading" id="heading-narrow"><a href="http://localhost:30303/">Go</a></div>
+<a href="index.html#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="http://localhost:30303/search">
+<div id="menu">
+<a href="http://localhost:30303/doc/">Documents</a>
+<a href="http://localhost:30303/pkg/">Packages</a>
+<a href="http://localhost:30303/project/">The Project</a>
+<a href="http://localhost:30303/help/">Help</a>
+
+<a href="http://localhost:30303/blog/">Blog</a>
+
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package handlers
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/handlers"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="index.html#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>
+Package handlers groups together all the code that talks to the World Wide Web.
+Here we can decode/encode JSON requests over HTTP, read URL parameters, check
+credentials for authorization, read/modify http headers. That information must
+be transformed into business language in order to call the inner layers.
+</p>
+<h3 id="hdr-What_lives_here">What lives here</h3>
+<p>
+Handlers and Presenters. A handler carries along a request, dealing with the
+protocol on behalf of the user case. A presenter takes a business object and
+constructs an adequate representation for the outside world.
+</p>
+<h3 id="hdr-Rules_of_the_road">Rules of the road</h3>
+<p>
+Incoming requests must be mapped to business objects. Those objects will be fed
+to the inner layers. Outgoing responses must come on business terms and must be
+presented as the contracts demands.
+</p>
+<p>
+Under no circumstances an external objects enters, unfiltered, to the inner
+layers, nor inner layers have a word on outside world representation.
+</p>
+
+			</div>
+		</div>
+		
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="index.html#MakeJSONHandlerFunc">func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger) http.HandlerFunc</a></dd>
+			
+			
+				
+				<dd><a href="index.html#FibonacciHandler">type FibonacciHandler</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FibonacciHandler.Execute">func (h *FibonacciHandler) Execute(ig InputGetter) *goutils.Response</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#FibonacciHandler.Input">func (h *FibonacciHandler) Input() HandlerInput</a></dd>
+				
+			
+				
+				<dd><a href="index.html#Handler">type Handler</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HandlerInput">type HandlerInput</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#HealthHandler">type HealthHandler</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthHandler.Execute">func (*HealthHandler) Execute(ig InputGetter) *goutils.Response</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="index.html#HealthHandler.Input">func (*HealthHandler) Input() HandlerInput</a></dd>
+				
+			
+				
+				<dd><a href="index.html#InputGetter">type InputGetter</a></dd>
+				
+				
+			
+				
+				<dd><a href="index.html#JSONHandlerLogger">type JSONHandlerLogger</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="pkg/interfaces/handlers/doc.go">doc.go</a>
+			
+				<a href="pkg/interfaces/handlers/fibonacci.go">fibonacci.go</a>
+			
+				<a href="pkg/interfaces/handlers/handler.go">handler.go</a>
+			
+				<a href="pkg/interfaces/handlers/health.go">health.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		<div id="pkg-callgraph" class="toggle" style="display: none">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Internal Call Graph section">Internal call graph ▹</h2>
+		</div> <!-- .expanded -->
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Internal Call Graph section">Internal call graph ▾</h2>
+			<p>
+			  In the call graph viewer below, each node
+			  is a function belonging to this package
+			  and its children are the functions it
+			  calls&mdash;perhaps dynamically.
+			</p>
+			<p>
+			  The root nodes are the entry points of the
+			  package: functions that may be called from
+			  outside the package.
+			  There may be non-exported or anonymous
+			  functions among them if they are called
+			  dynamically from another package.
+			</p>
+			<p>
+			  Click a node to visit that function's source code.
+			  From there you can visit its callers by
+			  clicking its declaring <code>func</code>
+			  token.
+			</p>
+			<p>
+			  Functions may be omitted if they were
+			  determined to be unreachable in the
+			  particular programs or tests that were
+			  analyzed.
+			</p>
+			<!-- Zero means show all package entry points. -->
+			<ul style="margin-left: 0.5in" id="callgraph-0" class="treeview"></ul>
+		</div>
+		</div> <!-- #pkg-callgraph -->
+
+		
+		
+		
+			
+			
+			<h2 id="MakeJSONHandlerFunc">func <a href="pkg/interfaces/handlers/handler.go?s=1153:1226#L21">MakeJSONHandlerFunc</a>
+				<a class="permalink" href="index.html#MakeJSONHandlerFunc">&#xb6;</a>
+			</h2>
+			<pre>func MakeJSONHandlerFunc(h <a href="index.html#Handler">Handler</a>, l <a href="index.html#JSONHandlerLogger">JSONHandlerLogger</a>) <a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#HandlerFunc">HandlerFunc</a></pre>
+			<p>
+MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
+a standard http.HandlerFunc
+</p>
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="FibonacciHandler">type <a href="pkg/interfaces/handlers/fibonacci.go?s=356:432#L3">FibonacciHandler</a>
+				<a class="permalink" href="index.html#FibonacciHandler">&#xb6;</a>
+			</h2>
+			<p>
+FibonacciHandler implements the handler interface and responds to
+/fibonacci requests using an interactor. It&#39;s purpose is just to
+demonstrate Clean Architecture with a practical scenario
+</p>
+
+			<pre>type FibonacciHandler struct {
+<span id="FibonacciHandler.Interactor"></span>    Interactor <a href="../../usecases/index.html">usecases</a>.<a href="../../usecases/index.html#GetNthFibonacciUsecase">GetNthFibonacciUsecase</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="FibonacciHandler.Execute">func (*FibonacciHandler) <a href="pkg/interfaces/handlers/fibonacci.go?s=1127:1195#L31">Execute</a>
+					<a class="permalink" href="index.html#FibonacciHandler.Execute">&#xb6;</a>
+				</h3>
+				<pre>func (h *<a href="index.html#FibonacciHandler">FibonacciHandler</a>) Execute(ig <a href="index.html#InputGetter">InputGetter</a>) *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a></pre>
+				<p>
+Execute carries on a /fibonacci request. Uses the given interactor to carry out
+the operation and get the desired value. Expected body format:
+</p>
+<pre>{
+	n: int - Number of fibonacci to retrieve (1 based)
+}
+</pre>
+<p>
+Expected response format:
+</p>
+<pre>{ Result: int - Operation result }
+</pre>
+<p>
+Expected error format:
+</p>
+<pre>{ ErrorMessage: string - Error detail }
+</pre>
+
+				
+				
+				
+			
+				
+				<h3 id="FibonacciHandler.Input">func (*FibonacciHandler) <a href="pkg/interfaces/handlers/fibonacci.go?s=687:734#L18">Input</a>
+					<a class="permalink" href="index.html#FibonacciHandler.Input">&#xb6;</a>
+				</h3>
+				<pre>func (h *<a href="index.html#FibonacciHandler">FibonacciHandler</a>) Input() <a href="index.html#HandlerInput">HandlerInput</a></pre>
+				<p>
+Input returns a fresh, empty instance of fibonacciRequestInput
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Handler">type <a href="pkg/interfaces/handlers/handler.go?s=694:1042#L10">Handler</a>
+				<a class="permalink" href="index.html#Handler">&#xb6;</a>
+			</h2>
+			<p>
+Handler is the interface for the objects that should process web requests.
+Input() must return a fresh struct to be filled with the request input
+Execute(input) receives a filled input struct to handle the request
+</p>
+
+			<pre>type Handler interface {
+    <span class="comment">// Input should return a pointer to the struct that this handler will need</span>
+    <span class="comment">// to be filled with the user input for a request</span>
+    Input() <a href="index.html#HandlerInput">HandlerInput</a>
+    <span class="comment">// Execute is the actual handler code. The InputGetter can be used to retrieve</span>
+    <span class="comment">// the request&#39;s input at any time (or not at all).</span>
+    Execute(<a href="index.html#InputGetter">InputGetter</a>) *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HandlerInput">type <a href="pkg/interfaces/handlers/handler.go?s=142:171#L1">HandlerInput</a>
+				<a class="permalink" href="index.html#HandlerInput">&#xb6;</a>
+			</h2>
+			<p>
+HandlerInput is a placeholder for whatever input a handler may need.
+</p>
+
+			<pre>type HandlerInput interface{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="HealthHandler">type <a href="pkg/interfaces/handlers/health.go?s=247:274#L1">HealthHandler</a>
+				<a class="permalink" href="index.html#HealthHandler">&#xb6;</a>
+			</h2>
+			<p>
+HealthHandler implements the handler interface and responds to /healthcheck
+requests with an OK message. Expected response format:
+{ Status: string - Always set to OK }
+</p>
+
+			<pre>type HealthHandler struct{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="HealthHandler.Execute">func (*HealthHandler) <a href="pkg/interfaces/handlers/health.go?s=631:694#L16">Execute</a>
+					<a class="permalink" href="index.html#HealthHandler.Execute">&#xb6;</a>
+				</h3>
+				<pre>func (*<a href="index.html#HealthHandler">HealthHandler</a>) Execute(ig <a href="index.html#InputGetter">InputGetter</a>) *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a></pre>
+				<p>
+Execute returns the service health status.
+Expected response format:
+</p>
+<pre>{ Status: string - Always &#34;OK&#34; }
+</pre>
+
+				
+				
+				
+			
+				
+				<h3 id="HealthHandler.Input">func (*HealthHandler) <a href="pkg/interfaces/handlers/health.go?s=440:482#L9">Input</a>
+					<a class="permalink" href="index.html#HealthHandler.Input">&#xb6;</a>
+				</h3>
+				<pre>func (*<a href="index.html#HealthHandler">HealthHandler</a>) Input() <a href="index.html#HandlerInput">HandlerInput</a></pre>
+				<p>
+Input returns a fresh, empty instance of healthHandlerInput
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="InputGetter">type <a href="pkg/interfaces/handlers/handler.go?s=412:469#L5">InputGetter</a>
+				<a class="permalink" href="index.html#InputGetter">&#xb6;</a>
+			</h2>
+			<p>
+InputGetter defines a type for all functions that, when called, will attempt
+to retrieve and parse the input of a request and return it. Should any error
+happen, a goutils.Response must be filled with an adequate message and code
+</p>
+
+			<pre>type InputGetter func() (<a href="index.html#HandlerInput">HandlerInput</a>, *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a>)</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="JSONHandlerLogger">type <a href="pkg/interfaces/handlers/handler.go?s=1358:1541#L27">JSONHandlerLogger</a>
+				<a class="permalink" href="index.html#JSONHandlerLogger">&#xb6;</a>
+			</h2>
+			<p>
+JSONHandlerLogger defines all the events a jsonHandler can report
+</p>
+
+			<pre>type JSONHandlerLogger interface {
+    LogRequestStart(r *<a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#Request">Request</a>)
+    LogRequestEnd(*<a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#Request">Request</a>, *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a>)
+    LogRequestPanic(*<a href="http://localhost:30303/pkg/net/http/">http</a>.<a href="http://localhost:30303/pkg/net/http/#Request">Request</a>, *<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/">goutils</a>.<a href="http://localhost:30303/pkg/github.com/Yapo/goutils/#Response">Response</a>, interface{})
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.10.1.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="http://localhost:30303/LICENSE">BSD license</a>.<br>
+<a href="http://localhost:30303/doc/tos.html">Terms of Service</a> |
+<a href="http://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+
+<!-- TODO(adonovan): load these from <head> using "defer" attribute? -->
+<script type="text/javascript" src="../../../lib/godoc/jquery.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.js"></script>
+<script type="text/javascript" src="../../../lib/godoc/jquery.treeview.edit.js"></script>
+
+
+<script>var goVersion = "go1.10.1";</script>
+<script type="text/javascript" src="../../../lib/godoc/godocs.js"></script>
+
+</body>
+</html>
+

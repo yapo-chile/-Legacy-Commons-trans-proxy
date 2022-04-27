@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/domain"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
 )
 
 // TransHandler is an interface to use Trans functions
@@ -19,22 +19,22 @@ type TransFactory interface {
 
 // TransRepo struct definition
 type TransRepo struct {
-	transFactory TransFactory
+	trans-proxyFactory TransFactory
 }
 
 // NewTransRepo instance TransRepo and set handler
-func NewTransRepo(transFactory TransFactory) *TransRepo {
+func NewTransRepo(trans-proxyFactory TransFactory) *TransRepo {
 	return &TransRepo{
-		transFactory: transFactory,
+		trans-proxyFactory: trans-proxyFactory,
 	}
 }
 
-// Execute executes the specified trans command
+// Execute executes the specified trans-proxy command
 func (repo *TransRepo) Execute(command domain.TransCommand) (domain.TransResponse, error) {
 	response := domain.TransResponse{
 		Params: make(map[string]string),
 	}
-	resp, err := repo.transaction(command.Command, command.Params)
+	resp, err := repo.trans-proxyaction(command.Command, command.Params)
 	if err != nil {
 		response.Params["error"] = err.Error()
 		return response, err
@@ -49,12 +49,12 @@ func (repo *TransRepo) Execute(command domain.TransCommand) (domain.TransRespons
 	return response, nil
 }
 
-func (repo *TransRepo) transaction(method string, transParams []domain.TransParams) (map[string]string, error) {
-	trans := repo.transFactory.MakeTransHandler()
-	for _, transParam := range transParams {
-		if reflect.TypeOf(transParam.Value).Kind() == reflect.Int {
-			transParam.Value = strconv.Itoa(transParam.Value.(int))
+func (repo *TransRepo) trans-proxyaction(method string, trans-proxyParams []domain.TransParams) (map[string]string, error) {
+	trans-proxy := repo.trans-proxyFactory.MakeTransHandler()
+	for _, trans-proxyParam := range trans-proxyParams {
+		if reflect.TypeOf(trans-proxyParam.Value).Kind() == reflect.Int {
+			trans-proxyParam.Value = strconv.Itoa(trans-proxyParam.Value.(int))
 		}
 	}
-	return trans.SendCommand(method, transParams)
+	return trans-proxy.SendCommand(method, trans-proxyParams)
 }

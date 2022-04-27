@@ -79,7 +79,7 @@
 		
 		<div id="short-nav">
 			<dl>
-			<dd><code>import "gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces"</code></dd>
+			<dd><code>import "gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces"</code></dd>
 			</dl>
 			<dl>
 			<dd><a href="index.html#pkg-overview" class="overviewLink">Overview</a></dd>
@@ -99,13 +99,13 @@
 				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
 				<p>
 Package interfaces is a place where the outside world lies on one side and our
-business on the other. Here we transform information from the outside world to
+business on the other. Here we trans-proxyform information from the outside world to
 business objects and internal replies to their corresponding outside world
 representation.
 </p>
 <h3 id="hdr-What_lives_here">What lives here</h3>
 <p>
-As an intermediary, here is where most translation code dwells. HTTP Handlers
+As an intermediary, here is where most trans-proxylation code dwells. HTTP Handlers
 abstract away the WWW and its protocol. Databases speak their own language.
 That is allowed at this layer, but not anywhere else. File objects, external
 services, anything that affects or is affected by the real world needs to be

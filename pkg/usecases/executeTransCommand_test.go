@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/domain"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
 )
 
 type MockTransRepository struct {

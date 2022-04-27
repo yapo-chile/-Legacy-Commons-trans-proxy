@@ -1,4 +1,4 @@
-module gitlab.com/yapo_team/legacy/commons/trans
+module gitlab.com/yapo_team/legacy/commons/trans-proxy
 
 go 1.17
 

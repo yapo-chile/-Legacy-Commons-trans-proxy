@@ -5,8 +5,8 @@ import (
 	"net/http/pprof"
 
 	"github.com/gorilla/context"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/handlers"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/loggers"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/handlers"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/loggers"
 	"gopkg.in/gorilla/mux.v1"
 )
 

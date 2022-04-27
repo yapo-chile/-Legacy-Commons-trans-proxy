@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{.Release.Name}}-trans-proxy-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "trans-proxy.labels" . | indent 4 }}
+data:
+  NEWRELIC_ENABLED: "{{ .Values.newrelic.enabled }}"
+  TRANS_COMMANDS: "{{ .Values.trans-proxy.commands }}"
+  TRANS_HOST: "{{ .Values.trans-proxy.host }}"
+  TRANS_PORT: "{{ .Values.trans-proxy.port }}"
+  TRANS_TIMEOUT: "{{ .Values.trans-proxy.timeout }}"
+  PROMETHEUS_ENABLED: "{{ .Values.prometheus.enabled }}"

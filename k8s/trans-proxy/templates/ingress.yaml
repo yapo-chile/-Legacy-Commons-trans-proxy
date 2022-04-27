@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "trans.fullname" . -}}
-{{- $hostPrefix := include "trans.hostPrefix" . -}}
+{{- $fullName := include "trans-proxy.fullname" . -}}
+{{- $hostPrefix := include "trans-proxy.hostPrefix" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "trans.labels" . | indent 4 }}
+{{ include "trans-proxy.labels" . | indent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

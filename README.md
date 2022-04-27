@@ -4,7 +4,7 @@
 This microservice acts as a proxy between other microservices and a Trans server. The params are passed in a JSON body, and it can be configured to limit what commands can be executed.
 
 
-## How to run trans
+## How to run trans-proxy
 
 * Create the dir: ` ~/go/src/gitlab.com/yapo_team/legacy/commons`
 
@@ -14,13 +14,13 @@ This microservice acts as a proxy between other microservices and a Trans server
 
   ```
   $ cd  ~/go/src/gitlab.com/yapo_team/legacy/commons
-  $ git clone git@gitlab.com:yapo_team/legacy/commons/trans.git
+  $ git clone git@gitlab.com:yapo_team/legacy/commons/trans-proxy.git
   ```
 
 * On the top dir execute the make instruction to clean and start:
 
   ```
-  $ cd trans
+  $ cd trans-proxy
   $ make docker-start
   ```
 
@@ -39,7 +39,7 @@ This microservice acts as a proxy between other microservices and a Trans server
   start                Compile and start the service
   docker-start         Compile and start the service using docker
   docker-stop          Stop docker containers
-  clone                Setup a new service repository based on trans
+  clone                Setup a new service repository based on trans-proxy
   fix-format           Run gofmt to reindent source
   info                 Display basic service info
   docs-start           Starts godoc webserver with live docs for the project
@@ -93,11 +93,11 @@ No request parameters
 ```
 
 ### POST  /api/v1/execute/{command}
-Sends the specified command to a trans server with the given params in the JSON body
+Sends the specified command to a trans-proxy server with the given params in the JSON body
 
 #### Request
-params: A JSON object, where the fields are the name of trans params (lowercase), and the values are the values required
-by the trans command
+params: A JSON object, where the fields are the name of trans-proxy params (lowercase), and the values are the values required
+by the trans-proxy command
 ```javascript
 {
 	"params":{
@@ -113,7 +113,7 @@ by the trans command
 200 OK
 {
 	"status": "TRANS_OK"
-	"response" - A JSON field containing all the values returned by the trans command
+	"response" - A JSON field containing all the values returned by the trans-proxy command
 	
 }
 ```

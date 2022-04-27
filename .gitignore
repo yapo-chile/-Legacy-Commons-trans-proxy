@@ -9,3 +9,4 @@ reports/*
 vendor/*
 app.docker
 goms*
+trans*

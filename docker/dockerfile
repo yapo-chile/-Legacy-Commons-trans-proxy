@@ -2,7 +2,7 @@ FROM golang:1.17 AS gobuilder
 
 ARG APPNAME
 
-WORKDIR /go/src/gitlab.com/yapo_team/legacy/commons/trans/${APPNAME}
+WORKDIR /go/src/gitlab.com/yapo_team/legacy/commons/trans-proxy/${APPNAME}
 COPY ./ .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o /app.linux cmd/${APPNAME}/main.go
 

@@ -17,7 +17,7 @@ export REPORT_ARTIFACTS=reports
 
 # APP variables
 # This variables are for the use of your microservice. This variables must be updated each time you are creating a new microservice
-export APPNAME=trans
+export APPNAME=trans-proxy
 export YO=`whoami`
 export SERVICE_HOST=localhost
 export SERVICE_PORT=8086
@@ -25,13 +25,13 @@ export SERVER_ROOT=${PWD}
 export BASE_URL="http://${SERVICE_HOST}:${SERVICE_PORT}"
 export MAIN_FILE=cmd/${APPNAME}/main.go
 export LOGGER_SYSLOG_ENABLED=false
-export LOGGER_SYSLOG_IDENTITY=trans
+export LOGGER_SYSLOG_IDENTITY=trans-proxy
 export LOGGER_STDLOG_ENABLED=true
 export LOGGER_LOG_LEVEL=0
 
 
 # Trans variables 
-# Change to target a trans server,i.e.:
+# Change to target a trans-proxy server,i.e.:
 # TRANS_HOST=jenna.schibsted.cl
 # TRANS_PORT=27205
 

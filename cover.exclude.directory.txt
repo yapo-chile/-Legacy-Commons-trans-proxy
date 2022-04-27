@@ -1,1 +1,1 @@
-gitlab.com/yapo_team/legacy/commons/trans/pkg/infrastructure
+gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/infrastructure

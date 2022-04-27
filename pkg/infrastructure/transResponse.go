@@ -27,13 +27,13 @@ func (r TransResponse) apply(f func(key, value string)) error {
 		if len(r) > n+5 && bytes.Equal(r[n:n+5], []byte("blob:")) {
 			i := bytes.IndexByte(r[n+5:], ':')
 			if i == -1 {
-				return fmt.Errorf("trans: invalid blob %q", r[n:])
+				return fmt.Errorf("trans-proxy: invalid blob %q", r[n:])
 			}
 			n += 5
 			var err error
 			blobLen, err = strconv.Atoi(string(r[n : n+i]))
 			if err != nil {
-				return fmt.Errorf("trans: cannot parse blob length: %v", err)
+				return fmt.Errorf("trans-proxy: cannot parse blob length: %v", err)
 			}
 			n += i + 1
 		}
@@ -47,7 +47,7 @@ func (r TransResponse) apply(f func(key, value string)) error {
 		}
 
 		if i == -1 {
-			return fmt.Errorf("trans: invalid key-value format: %q", r[n:])
+			return fmt.Errorf("trans-proxy: invalid key-value format: %q", r[n:])
 		}
 
 		key := string(r[n : n+i])
@@ -59,7 +59,7 @@ func (r TransResponse) apply(f func(key, value string)) error {
 		if blobLen <= 0 {
 			i = bytes.IndexByte(r[n:], '\n')
 			if i == -1 {
-				return fmt.Errorf("trans: newline is missing: %q", r[n:])
+				return fmt.Errorf("trans-proxy: newline is missing: %q", r[n:])
 			}
 			vl += i
 		}

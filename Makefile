@@ -36,7 +36,7 @@ docker-start:  docker-compose-up
 ## Stop docker containers
 docker-stop: docker-compose-down
 
-## Setup a new service repository based on trans
+## Setup a new service repository based on trans-proxy
 clone:
 	@scripts/commands/clone.sh
 

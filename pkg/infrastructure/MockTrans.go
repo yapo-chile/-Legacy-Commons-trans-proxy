@@ -28,7 +28,7 @@ const (
 // without the "end\n" message
 type Handler func([]byte) []byte
 
-// MockTransServer the struct tht represents a Mock trans server
+// MockTransServer the struct tht represents a Mock trans-proxy server
 type MockTransServer struct {
 	Address  string
 	IsBusy   bool
@@ -37,10 +37,10 @@ type MockTransServer struct {
 	mtx      sync.RWMutex
 }
 
-// Start starts mock trans server
+// Start starts mock trans-proxy server
 func (srv *MockTransServer) Start() {
 	if srv.Address != "" {
-		panic("trans test server already started")
+		panic("trans-proxy test server already started")
 	}
 	srv.Address = srv.listener.Addr().String()
 	go func() {
@@ -152,7 +152,7 @@ func newLocalListener() net.Listener {
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		if l, err = net.Listen("tcp6", "[::1]:0"); err != nil {
-			panic(fmt.Sprintf("transtest: failed to listen on a port: %v", err))
+			panic(fmt.Sprintf("trans-proxytest: failed to listen on a port: %v", err))
 		}
 	}
 	return l

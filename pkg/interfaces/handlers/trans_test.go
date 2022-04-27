@@ -8,8 +8,8 @@ import (
 	"github.com/Yapo/goutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/domain"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/usecases"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/usecases"
 )
 
 const (
@@ -42,9 +42,9 @@ func TestTransHandlerInput(t *testing.T) {
 
 func TestTransHandlerExecuteOK(t *testing.T) {
 	m := MockTransInteractor{}
-	input := TransHandlerInput{Command: "transinfo"}
+	input := TransHandlerInput{Command: "trans-proxyinfo"}
 	command := domain.TransCommand{
-		Command: "transinfo",
+		Command: "trans-proxyinfo",
 		Params:  make([]domain.TransParams, 0),
 	}
 	response := domain.TransResponse{

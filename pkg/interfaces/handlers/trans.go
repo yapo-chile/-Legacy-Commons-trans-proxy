@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/Yapo/goutils"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/domain"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/usecases"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/usecases"
 )
 
 // TransHandler implements the handler interface and responds to /execute
@@ -27,12 +27,12 @@ type TransRequestOutput struct {
 	Response map[string]string `json:"response"`
 }
 
-// Input returns a fresh, empty instance of transHandlerInput
+// Input returns a fresh, empty instance of trans-proxyHandlerInput
 func (t *TransHandler) Input() HandlerInput {
 	return &TransHandlerInput{}
 }
 
-// Execute executes the given trans request and returns the response
+// Execute executes the given trans-proxy request and returns the response
 // of the execution.
 // Expected response format:
 //   { Status: string - "TRANS_OK" or error }
@@ -45,7 +45,7 @@ func (t *TransHandler) Execute(ig InputGetter) *goutils.Response {
 	command := parseInput(in)
 	var val domain.TransResponse
 	val, err := t.Interactor.ExecuteCommand(command)
-	// handle trans errors, database errors, or general reported errors by trans
+	// handle trans-proxy errors, database errors, or general reported errors by trans-proxy
 	if _, ok := val.Params["error"]; ok ||
 		val.Status == usecases.TransError ||
 		val.Status == usecases.TransDatabaseError {

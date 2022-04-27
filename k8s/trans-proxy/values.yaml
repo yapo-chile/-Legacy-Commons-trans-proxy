@@ -1,4 +1,4 @@
-# Default values for trans.
+# Default values for trans-proxy.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,7 +6,7 @@ replicaCount: 1
 globals:
   env: reg
 image:
-  repository: containers.mpi-internal.com/yapo/trans
+  repository: containers.mpi-internal.com/yapo/trans-proxy
   tag: "" # Should it pass from the command line
   pullPolicy: IfNotPresent
   pullSecret: containers-mpi-internal-com
@@ -23,8 +23,8 @@ prometheus:
   enabled: "true"
   port: "8877"
 
-trans:
-  commands: "transinfo|get_account|newad|clear|loadad|set_ad_evaluation|bump_target_advertisement|bump_ad"
+trans-proxy:
+  commands: "trans-proxyinfo|get_account|newad|clear|loadad|set_ad_evaluation|bump_target_advertisement|bump_ad"
   host: "172.21.10.62"
   port: "5656"
   timeout: "30"

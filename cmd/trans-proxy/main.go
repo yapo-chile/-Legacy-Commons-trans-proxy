@@ -6,11 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/infrastructure"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/handlers"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/loggers"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/repository/services"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/usecases"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/infrastructure"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/handlers"
 )
 
 var shutdownSequence = infrastructure.NewShutdownSequence()
@@ -32,8 +29,8 @@ func main() { // nolint funlen
 	fmt.Printf("Setting up logger\n")
 	logger, err := infrastructure.MakeYapoLogger(&conf.LoggerConf,
 		prometheus.NewEventsCollector(
-			"trans_service_events_total",
-			"events tracker counter for trans service",
+			"trans-proxy_service_events_total",
+			"events tracker counter for trans-proxy service",
 		),
 	)
 	if err != nil {
@@ -42,21 +39,10 @@ func main() { // nolint funlen
 	}
 
 	logger.Info("Initializing resources")
-
-	// HealthHandler
-	var healthHandler handlers.HealthHandler
-
-	// transHandler
-	transFactory := infrastructure.NewTextProtocolTransFactory(conf.Trans, logger)
-	transRepository := services.NewTransRepo(transFactory)
-	transLogger := loggers.MakeTransInteractorLogger(logger)
-	transInteractor := usecases.TransInteractor{
-		Repository: transRepository,
-		Logger:     transLogger,
 	}
 
-	transHandler := handlers.TransHandler{
-		Interactor: transInteractor,
+	trans-proxyHandler := handlers.TransHandler{
+		Interactor: trans-proxyInteractor,
 	}
 	// Setting up router
 	maker := infrastructure.RouterMaker{
@@ -67,20 +53,14 @@ func main() { // nolint funlen
 		WithProfiling: conf.ServiceConf.Profiling,
 		Routes: infrastructure.Routes{
 			{
-				// This is the base path, all routes will start with this prefix
-				Prefix: "/api/v{version:[1-9][0-9]*}",
-				Groups: []infrastructure.Route{
-					{
-						Name:    "Check service health",
-						Method:  "GET",
 						Pattern: "/healthcheck",
 						Handler: &healthHandler,
 					},
 					{
-						Name:    "Execute a trans request",
+						Name:    "Execute a trans-proxy request",
 						Method:  "POST",
 						Pattern: "/execute/{command}",
-						Handler: &transHandler,
+						Handler: &trans-proxyHandler,
 					},
 				},
 			},

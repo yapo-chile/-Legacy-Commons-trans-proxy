@@ -7,7 +7,7 @@ type TransParams struct {
 	Blob  bool
 }
 
-// TransCommand represents a trans command with params to be executed on a trans server
+// TransCommand represents a trans-proxy command with params to be executed on a trans-proxy server
 type TransCommand struct {
 	// the command to be executed
 	Command string
@@ -23,8 +23,8 @@ type TransResponse struct {
 	Params map[string]string
 }
 
-// TransRepository defines a storage for the trans commands
+// TransRepository defines a storage for the trans-proxy commands
 type TransRepository interface {
-	// Execute executes the command on a trans server
+	// Execute executes the command on a trans-proxy server
 	Execute(command TransCommand) (TransResponse, error)
 }

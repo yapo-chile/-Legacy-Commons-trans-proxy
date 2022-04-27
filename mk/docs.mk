@@ -18,4 +18,4 @@ docs-update: docs-compile
 
 ## Opens the live documentation on the default web browser
 docs: docs-stop docs-start
-	open http://${DOCS_HOST}/pkg/gitlab.com/yapo_team/legacy/commons/trans/
+	open http://${DOCS_HOST}/pkg/gitlab.com/yapo_team/legacy/commons/trans-proxy/

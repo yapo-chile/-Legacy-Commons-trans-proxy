@@ -15,19 +15,19 @@ import (
 	"golang.org/x/text/encoding/charmap"
 
 	"github.com/eapache/go-resiliency/retrier"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/domain"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/loggers"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/repository/services"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/domain"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/loggers"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/repository/services"
 )
 
-// trans struct definition
-type trans struct {
+// trans-proxy struct definition
+type trans-proxy struct {
 	conf            TransConf
 	logger          loggers.Logger
 	allowedCommands []string
 }
 
-// textProtocolTransFactory is a auxiliar struct to create trans on demand
+// textProtocolTransFactory is a auxiliar struct to create trans-proxy on demand
 type textProtocolTransFactory struct {
 	conf            TransConf
 	logger          loggers.Logger
@@ -48,15 +48,15 @@ func NewTextProtocolTransFactory(
 
 // MakeTransHandler initialize a services.TransHandler on demand
 func (t *textProtocolTransFactory) MakeTransHandler() services.TransHandler {
-	return &trans{
+	return &trans-proxy{
 		conf:            t.conf,
 		logger:          t.logger,
 		allowedCommands: t.allowedCommands,
 	}
 }
 
-// SendCommand use a socket connection to send commands to trans port
-func (handler *trans) SendCommand(cmd string, transParams []domain.TransParams) (map[string]string, error) {
+// SendCommand use a socket connection to send commands to trans-proxy port
+func (handler *trans-proxy) SendCommand(cmd string, trans-proxyParams []domain.TransParams) (map[string]string, error) {
 	respMap := make(map[string]string)
 	// check if the command is allowed; if not, return error
 	valid := handler.isAllowedCommand(cmd)
@@ -71,8 +71,8 @@ func (handler *trans) SendCommand(cmd string, transParams []domain.TransParams) 
 	}
 	conn, err := handler.connect()
 	if err != nil {
-		handler.logger.Error("Error connecting to trans: %s\n", err.Error())
-		return respMap, fmt.Errorf("Error connecting with trans server")
+		handler.logger.Error("Error connecting to trans-proxy: %s\n", err.Error())
+		return respMap, fmt.Errorf("Error connecting with trans-proxy server")
 	}
 	defer conn.Close() //nolint: errcheck, megacheck
 
@@ -83,7 +83,7 @@ func (handler *trans) SendCommand(cmd string, transParams []domain.TransParams) 
 	)
 	defer cancel()
 
-	respMap, err = handler.sendWithContext(ctx, conn, cmd, transParams)
+	respMap, err = handler.sendWithContext(ctx, conn, cmd, trans-proxyParams)
 	if err != nil {
 		handler.logger.Error("Error Sending command %s: %s\n", cmd, err)
 	}
@@ -91,8 +91,8 @@ func (handler *trans) SendCommand(cmd string, transParams []domain.TransParams) 
 	return respMap, err
 }
 
-// isAllowedCommand checks if the given command can be sent to trans
-func (handler *trans) isAllowedCommand(cmd string) bool {
+// isAllowedCommand checks if the given command can be sent to trans-proxy
+func (handler *trans-proxy) isAllowedCommand(cmd string) bool {
 	for _, allowedCommand := range handler.allowedCommands {
 		if allowedCommand == cmd {
 			return true
@@ -101,9 +101,9 @@ func (handler *trans) isAllowedCommand(cmd string) bool {
 	return false
 }
 
-// connect returns a connection to the trans client.
+// connect returns a connection to the trans-proxy client.
 // Retries to connect after retryAfter time if the connection times out
-func (handler *trans) connect() (net.Conn, error) {
+func (handler *trans-proxy) connect() (net.Conn, error) {
 	// initiate the retrier that will handle retry reconnect if the connection dies
 	r := retrier.New(
 		[]time.Duration{
@@ -128,10 +128,10 @@ func (handler *trans) connect() (net.Conn, error) {
 	return conn, err
 }
 
-// sendWithContext sends the message to trans but is cancelable via a context.
+// sendWithContext sends the message to trans-proxy but is cancelable via a context.
 // The context timeout specified how long the caller can wait
-// for the trans to respond
-func (handler *trans) sendWithContext(
+// for the trans-proxy to respond
+func (handler *trans-proxy) sendWithContext(
 	ctx context.Context,
 	conn io.ReadWriteCloser,
 	cmd string,
@@ -156,7 +156,7 @@ func (handler *trans) sendWithContext(
 		// is waiting on reading from or writing to the connection.
 		err := conn.Close()
 		if err != nil {
-			handler.logger.Error("Error Closing connection to trans after ctx done: %s\n", err.Error())
+			handler.logger.Error("Error Closing connection to trans-proxy after ctx done: %s\n", err.Error())
 		}
 		// wait for the goroutine to return and ignore the error
 		<-errChan
@@ -169,7 +169,7 @@ func (handler *trans) sendWithContext(
 	}
 }
 
-func (handler *trans) send(conn io.ReadWriter, cmd string, args []domain.TransParams) (map[string]string, error) {
+func (handler *trans-proxy) send(conn io.ReadWriter, cmd string, args []domain.TransParams) (map[string]string, error) {
 	// Check greeting.
 	reader := bufio.NewReader(conn)
 	line, err := reader.ReadSlice('\n')
@@ -177,7 +177,7 @@ func (handler *trans) send(conn io.ReadWriter, cmd string, args []domain.TransPa
 		return nil, err
 	}
 	if !bytes.Equal(line, []byte("220 Welcome.\n")) {
-		return nil, fmt.Errorf("trans: unexpected greeting: %q", line)
+		return nil, fmt.Errorf("trans-proxy: unexpected greeting: %q", line)
 	}
 
 	buf := make([]byte, 0)

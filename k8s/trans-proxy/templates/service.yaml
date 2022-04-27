@@ -4,10 +4,10 @@ metadata:
   annotations:
     prometheus.io/port: "{{ .Values.prometheus.port }}"
     prometheus.io/scrape: "{{ .Values.prometheus.enabled }}"
-  name: {{ include "trans.fullname" . }}
+  name: {{ include "trans-proxy.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-{{ include "trans.labels" . | indent 4 }}
+{{ include "trans-proxy.labels" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -20,5 +20,5 @@ spec:
       protocol: TCP
       name: prom
   selector:
-    app.kubernetes.io/name: {{ include "trans.name" . }}
+    app.kubernetes.io/name: {{ include "trans-proxy.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

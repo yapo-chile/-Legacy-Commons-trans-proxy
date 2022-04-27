@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"github.com/Yapo/logger"
-	"gitlab.com/yapo_team/legacy/commons/trans/pkg/interfaces/loggers"
+	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/loggers"
 )
 
 // yapoLogger struct that implements the Logger interface using the Yapo/logger library

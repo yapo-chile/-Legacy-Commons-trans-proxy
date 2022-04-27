@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "trans.name" -}}
+{{- define "trans-proxy.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "trans.fullname" -}}
+{{- define "trans-proxy.fullname" -}}
 {{- if .Values.dontUseReleaseName -}}
 {{- .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- else if .Values.fullnameOverride -}}
@@ -29,16 +29,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "trans.chart" -}}
+{{- define "trans-proxy.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "trans.labels" -}}
-app.kubernetes.io/name: {{ include "trans.name" . }}
-helm.sh/chart: {{ include "trans.chart" . }}
+{{- define "trans-proxy.labels" -}}
+app.kubernetes.io/name: {{ include "trans-proxy.name" . }}
+helm.sh/chart: {{ include "trans-proxy.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -50,8 +50,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Generate the host prefix using the env global var
 */}}
-{{- define "trans.hostPrefix" -}}
-{{- $name := include "trans.name" . -}}
+{{- define "trans-proxy.hostPrefix" -}}
+{{- $name := include "trans-proxy.name" . -}}
 {{- if eq "reg" .Values.globals.env -}}
 {{- printf "%s.%s.%s" $name .Release.Namespace .Values.globals.env -}}
 {{- else -}}

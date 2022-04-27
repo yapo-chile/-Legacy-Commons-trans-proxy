@@ -9,12 +9,18 @@ import (
 	"strings"
 )
 
-// ServiceConf holds configuration for this Service
-type ServiceConf struct {
-	// Host the host and port where the service will listen for requests
-	Host string `env:"HOST" envDefault:":8080"`
+// RuntimeConfig config to start the app
+type RuntimeConfig struct {
+	Host string `env:"HOST" envDefault:"0.0.0.0"`
+	Port int    `env:"PORT" envDefault:"8080"`
 	// Profiling if the service should add profiling endpoints with net/http/pprof
-	Profiling bool `env:"PROFILING" envDefault:"true"`
+	Profiling bool   `env:"PROFILING" envDefault:"true"`
+	ApiKey    string `env:"API_KEY" envDefault:"test"`
+}
+
+// Addresss return the address of the service with host and port
+func (c RuntimeConfig) Address() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
 // LoggerConf holds configuration for logging
@@ -37,12 +43,6 @@ type PrometheusConf struct {
 	Enabled bool   `env:"ENABLED" envDefault:"false"`
 }
 
-// RuntimeConfig config to start the app
-type RuntimeConfig struct {
-	Host string `env:"HOST" envDefault:"0.0.0.0"`
-	Port int    `env:"PORT" envDefault:"8080"`
-}
-
 // TransConf transaction server connection.
 type TransConf struct {
 	// AllowedCommands is a list with one or more trans commands, separated by '|'
@@ -61,7 +61,6 @@ type TransConf struct {
 // Config holds all configuration for the service
 type Config struct {
 	Trans          TransConf      `env:"TRANS_"`
-	ServiceConf    ServiceConf    `env:"SERVICE_"`
 	PrometheusConf PrometheusConf `env:"PROMETHEUS_"`
 	LoggerConf     LoggerConf     `env:"LOGGER_"`
 	Runtime        RuntimeConfig  `env:"APP_"`

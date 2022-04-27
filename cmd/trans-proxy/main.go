@@ -62,7 +62,7 @@ func main() { // nolint funlen
 		WrapperFuncs: []infrastructure.WrapperFunc{
 			prometheus.TrackHandlerFunc,
 		},
-		WithProfiling: conf.ServiceConf.Profiling,
+		WithProfiling: conf.Runtime.Profiling,
 		Routes: infrastructure.Routes{
 			{
 				// This is the base path, all routes will start with this prefix
@@ -85,7 +85,7 @@ func main() { // nolint funlen
 		},
 	}
 	server := infrastructure.NewHTTPServer(
-		fmt.Sprintf("%s:%d", conf.Runtime.Host, conf.Runtime.Port),
+		conf.Runtime.Address(),
 		maker.NewRouter(),
 		logger,
 	)
@@ -94,5 +94,5 @@ func main() { // nolint funlen
 	shutdownSequence.Wait()
 
 	logger.Info("Starting request serving")
-	logger.Crit("%s\n", http.ListenAndServe(conf.ServiceConf.Host, maker.NewRouter()))
+	logger.Crit("%s\n", http.ListenAndServe(conf.Runtime.Address(), maker.NewRouter()))
 }

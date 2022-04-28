@@ -12,12 +12,14 @@ import (
 // requests with a message. Expected response format:
 // { status: string, response: json }
 type TransHandler struct {
-	Interactor usecases.ExecuteTransUsecase
+	Interactor                usecases.ExecuteTransUsecase
+	TokenValidationInteractor usecases.ValidateTokenInteractor
 }
 
 // TransHandlerInput struct that represents the input
 type TransHandlerInput struct {
-	Command string                 `get:"command"`
+	Token   string                 `headers:"Authorization"`
+	Command string                 `path:"command"`
 	Params  map[string]interface{} `json:"params"`
 }
 
@@ -27,9 +29,11 @@ type TransRequestOutput struct {
 	Response map[string]string `json:"response"`
 }
 
-// Input returns a fresh, empty instance of trans-proxyHandlerInput
-func (t *TransHandler) Input() HandlerInput {
-	return &TransHandlerInput{}
+// Input returns a fresh, empty instance of transHandlerInput
+func (t *TransHandler) Input(ir InputRequest) HandlerInput {
+	input := TransHandlerInput{}
+	ir.Set(&input).FromHeaders().FromJSONBody().FromPath()
+	return &input
 }
 
 // Execute executes the given trans-proxy request and returns the response
@@ -42,6 +46,15 @@ func (t *TransHandler) Execute(ig InputGetter) *goutils.Response {
 		return response
 	}
 	in := input.(*TransHandlerInput)
+
+	// auth token validation
+	if _, err := t.TokenValidationInteractor.CleanAndMatchToken(in.Token); err != nil {
+		return &goutils.Response{
+			Code: http.StatusUnauthorized,
+			Body: err.Error(),
+		}
+	}
+
 	command := parseInput(in)
 	var val domain.TransResponse
 	val, err := t.Interactor.ExecuteCommand(command)

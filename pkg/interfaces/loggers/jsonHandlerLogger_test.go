@@ -17,6 +17,6 @@ func TestJSONHandlerLogger(t *testing.T) {
 	r := httptest.NewRequest("GET", "/test", strings.NewReader(""))
 	l := MakeJSONHandlerLogger(m)
 	l.LogRequestStart(r)
-	l.LogRequestEnd(r, &goutils.Response{})
+	l.LogRequestEnd(r, &goutils.Response{}, "")
 	l.LogRequestPanic(r, &goutils.Response{}, nil)
 }

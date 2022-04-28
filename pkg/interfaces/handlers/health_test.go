@@ -15,7 +15,8 @@ func MakeMockInputHealthGetter(input HandlerInput, response *goutils.Response) I
 }
 func TestHealthHandlerInput(t *testing.T) {
 	var h HealthHandler
-	input := h.Input()
+	mMockInputRequest := MockInputRequest{}
+	input := h.Input(&mMockInputRequest)
 	var expected *healthHandlerInput
 	assert.IsType(t, expected, input)
 }

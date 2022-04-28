@@ -15,9 +15,8 @@ func TestInvalidToken(t *testing.T) {
 		SecretToken: defaultToken,
 	}
 
-	statusCode, err := interactor.CleanAndMatchToken("")
+	err := interactor.CleanAndMatchToken("")
 	assert.Error(t, err)
-	assert.Equal(t, StatusUnauthorized, statusCode)
 }
 
 func TestValidToken(t *testing.T) {
@@ -25,16 +24,14 @@ func TestValidToken(t *testing.T) {
 		SecretToken: defaultToken,
 	}
 
-	statusCode, err := interactor.CleanAndMatchToken("test")
+	err := interactor.CleanAndMatchToken("test")
 	assert.NoError(t, err)
-	assert.Equal(t, StatusOK, statusCode)
 }
 func TestNoCheckToken(t *testing.T) {
 	interactor := ValidateToken{
 		SecretToken: "",
 	}
 
-	statusCode, err := interactor.CleanAndMatchToken("test")
+	err := interactor.CleanAndMatchToken("test")
 	assert.NoError(t, err)
-	assert.Equal(t, StatusOK, statusCode)
 }

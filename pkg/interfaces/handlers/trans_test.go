@@ -1,6 +1,5 @@
 package handlers
 
-/*
 import (
 	"errors"
 	"net/http"
@@ -32,10 +31,26 @@ func MakeMockInputTransGetter(input HandlerInput, response *goutils.Response) In
 	}
 }
 
+type MockTokenValidator struct {
+	mock.Mock
+}
+
+func (m *MockTokenValidator) CleanAndMatchToken(token string) error {
+	ret := m.Called(token)
+	return ret.Error(0)
+}
+
 func TestTransHandlerInput(t *testing.T) {
 	m := MockTransInteractor{}
+	mInputRequest := MockInputRequest{}
+	mTargetRequest := MockTargetRequest{}
+	mInputRequest.On("Set", mock.Anything).Return(&mTargetRequest)
+	mTargetRequest.On("FromHeaders").Return()
+	mTargetRequest.On("FromPath").Return()
+	mTargetRequest.On("FromJSONBody").Return()
+
 	h := TransHandler{Interactor: &m}
-	input := h.Input()
+	input := h.Input(&mInputRequest)
 	var expected *TransHandlerInput
 	assert.IsType(t, expected, input)
 	m.AssertExpectations(t)
@@ -43,16 +58,20 @@ func TestTransHandlerInput(t *testing.T) {
 
 func TestTransHandlerExecuteOK(t *testing.T) {
 	m := MockTransInteractor{}
-	input := TransHandlerInput{Command: "trans-proxyinfo"}
+	input := TransHandlerInput{Command: "transinfo"}
 	command := domain.TransCommand{
-		Command: "trans-proxyinfo",
+		Command: "transinfo",
 		Params:  make([]domain.TransParams, 0),
 	}
 	response := domain.TransResponse{
 		Status: usecases.TransOK,
 	}
 	m.On("ExecuteCommand", command).Return(response, nil).Once()
-	h := TransHandler{Interactor: &m}
+
+	mTokenVal := MockTokenValidator{}
+	mTokenVal.On("CleanAndMatchToken", "").Return(nil).Once()
+
+	h := TransHandler{Interactor: &m, TokenValidationInteractor: &mTokenVal}
 
 	expectedResponse := &goutils.Response{
 		Code: http.StatusOK,
@@ -93,7 +112,10 @@ func TestTransHandlerParseInput(t *testing.T) {
 	response.Params["email"] = fakeEmail
 	response.Params["is_company"] = "true"
 	m.On("ExecuteCommand", command).Return(response, nil).Once()
-	h := TransHandler{Interactor: &m}
+	mTokenVal := MockTokenValidator{}
+	mTokenVal.On("CleanAndMatchToken", "").Return(nil).Once()
+
+	h := TransHandler{Interactor: &m, TokenValidationInteractor: &mTokenVal}
 
 	requestOutput := TransRequestOutput{
 		Status:   usecases.TransOK,
@@ -125,7 +147,10 @@ func TestTransHandlerExecuteError(t *testing.T) {
 		Status: usecases.TransError,
 	}
 	m.On("ExecuteCommand", command).Return(response, nil).Once()
-	h := TransHandler{Interactor: &m}
+	mTokenVal := MockTokenValidator{}
+	mTokenVal.On("CleanAndMatchToken", "").Return(nil).Once()
+
+	h := TransHandler{Interactor: &m, TokenValidationInteractor: &mTokenVal}
 
 	expectedResponse := &goutils.Response{
 		Code: http.StatusBadRequest,
@@ -150,12 +175,38 @@ func TestTransHandlerExecuteInternalError(t *testing.T) {
 	}
 	response := domain.TransResponse{}
 	m.On("ExecuteCommand", command).Return(response, errors.New("Error")).Once()
-	h := TransHandler{Interactor: &m}
+	mTokenVal := MockTokenValidator{}
+	mTokenVal.On("CleanAndMatchToken", "").Return(nil).Once()
+
+	h := TransHandler{Interactor: &m, TokenValidationInteractor: &mTokenVal}
 
 	expectedResponse := &goutils.Response{
 		Code: http.StatusInternalServerError,
 		Body: &goutils.GenericError{
 			ErrorMessage: "Error",
+		},
+	}
+
+	getter := MakeMockInputTransGetter(&input, nil)
+	r := h.Execute(getter)
+	assert.Equal(t, expectedResponse, r)
+
+	m.AssertExpectations(t)
+}
+
+func TestTransHandlerExecuteUnauthorized(t *testing.T) {
+	m := MockTransInteractor{}
+	input := TransHandlerInput{Command: "get_account"}
+
+	mTokenVal := MockTokenValidator{}
+	mTokenVal.On("CleanAndMatchToken", "").Return(errors.New("foo")).Once()
+
+	h := TransHandler{Interactor: &m, TokenValidationInteractor: &mTokenVal}
+
+	expectedResponse := &goutils.Response{
+		Code: http.StatusUnauthorized,
+		Body: &goutils.GenericError{
+			ErrorMessage: "foo",
 		},
 	}
 
@@ -181,4 +232,39 @@ func TestTransHandlerInputError(t *testing.T) {
 
 	m.AssertExpectations(t)
 }
-*/
+
+func TestBuildCommand(t *testing.T) {
+	input := TransHandlerInput{
+		Command: "get_account",
+		Params:  make(map[string]interface{}),
+	}
+	sliceParams := make([]interface{}, 0)
+	mapParams := make(map[string]interface{})
+	mapParams["subemail"] = fakeEmail
+	sliceParams = append(sliceParams, mapParams)
+	input.Params["email"] = sliceParams
+
+	secondSliceParam := make([]interface{}, 0)
+	secondSliceParam = append(secondSliceParam, "true")
+	input.Params["is_company"] = secondSliceParam
+
+	command := domain.TransCommand{
+		Command: "get_account",
+		Params: []domain.TransParams{
+			{
+				Key:   "subemail",
+				Value: "user@test.com",
+				Blob:  false,
+			},
+			{
+				Key:   "is_company",
+				Value: "true",
+				Blob:  false,
+			},
+		},
+	}
+
+	r := BuildCommand(&input)
+
+	assert.Equal(t, command, r)
+}

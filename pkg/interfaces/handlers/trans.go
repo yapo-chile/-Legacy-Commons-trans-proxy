@@ -48,14 +48,16 @@ func (t *TransHandler) Execute(ig InputGetter) *goutils.Response {
 	in := input.(*TransHandlerInput)
 
 	// auth token validation
-	if _, err := t.TokenValidationInteractor.CleanAndMatchToken(in.Token); err != nil {
+	if err := t.TokenValidationInteractor.CleanAndMatchToken(in.Token); err != nil {
 		return &goutils.Response{
 			Code: http.StatusUnauthorized,
-			Body: err.Error(),
+			Body: &goutils.GenericError{
+				ErrorMessage: err.Error(),
+			},
 		}
 	}
 
-	command := parseInput(in)
+	command := BuildCommand(in)
 	var val domain.TransResponse
 	val, err := t.Interactor.ExecuteCommand(command)
 	// handle trans-proxy errors, database errors, or general reported errors by trans-proxy
@@ -93,13 +95,12 @@ func (t *TransHandler) Execute(ig InputGetter) *goutils.Response {
 	return response
 }
 
-func parseInput(input *TransHandlerInput) domain.TransCommand {
+func BuildCommand(input *TransHandlerInput) domain.TransCommand {
 	command := domain.TransCommand{
 		Command: input.Command,
 	}
 
 	params := make([]domain.TransParams, 0)
-
 	for key, value := range input.Params {
 		if _, ok := value.([]interface{}); ok {
 			for _, val := range value.([]interface{}) {

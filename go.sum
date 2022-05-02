@@ -2,6 +2,8 @@ github.com/Yapo/goutils v1.2.1-0.20180424210448-721ca4146b6a h1:3J1lUGTkOumP+QRF
 github.com/Yapo/goutils v1.2.1-0.20180424210448-721ca4146b6a/go.mod h1:vwbb836mTl+MESeRTP4jmRBjzlvhNqcf5lSeb5YVahg=
 github.com/Yapo/logger v0.0.0-20170328173756-91855e974718 h1:u57RyLOqvJFfyK1/9+V5aeqKdK2iKXxdXFWRoqF44UA=
 github.com/Yapo/logger v0.0.0-20170328173756-91855e974718/go.mod h1:M3zxSm+YcYPvdII8l5Hq0wzYVGm/NmKTbGZ55GVoxcM=
+github.com/anevsky/cachego v0.0.0-20170305195447-977d3faf0e5b h1:qNzwXctV4wO1tu8e2mjecbcHDY5vX6xTDKFshpa4XPQ=
+github.com/anevsky/cachego v0.0.0-20170305195447-977d3faf0e5b/go.mod h1:W0YwfFf2kjfdhO2UV8h4Ox8xdLJXRc6wrXozqV9vE0s=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 h1:xJ4a3vCFaGF/jqvzLMYoU8P317H5OQ+Via4RmuPwCS0=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=

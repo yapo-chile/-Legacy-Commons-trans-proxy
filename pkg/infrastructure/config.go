@@ -7,14 +7,21 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
-// ServiceConf holds configuration for this Service
-type ServiceConf struct {
-	// Host the host and port where the service will listen for requests
-	Host string `env:"HOST" envDefault:":8080"`
+// RuntimeConfig config to start the app
+type RuntimeConfig struct {
+	Host string `env:"HOST" envDefault:"0.0.0.0"`
+	Port int    `env:"PORT" envDefault:"8080"`
 	// Profiling if the service should add profiling endpoints with net/http/pprof
-	Profiling bool `env:"PROFILING" envDefault:"true"`
+	Profiling bool   `env:"PROFILING" envDefault:"true"`
+	APIKey    string `env:"API_KEY" envDefault:"test"`
+}
+
+// Addresss return the address of the service with host and port
+func (c RuntimeConfig) Address() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
 // LoggerConf holds configuration for logging
@@ -37,10 +44,40 @@ type PrometheusConf struct {
 	Enabled bool   `env:"ENABLED" envDefault:"false"`
 }
 
-// RuntimeConfig config to start the app
-type RuntimeConfig struct {
-	Host string `env:"HOST" envDefault:"0.0.0.0"`
-	Port int    `env:"PORT" envDefault:"8080"`
+// ProfileConf holds configuration to send http request to profile
+// CorsConf holds cors headers
+type CorsConf struct {
+	Enabled bool   `env:"ENABLED" envDefault:"false"`
+	Origin  string `env:"ORIGIN" envDefault:"*"`
+	Methods string `env:"METHODS" envDefault:"GET, OPTIONS"`
+	Headers string `env:"HEADERS" envDefault:"Accept,Content-Type,Content-Length,If-None-Match,Accept-Encoding,User-Agent"`
+}
+
+// GetHeaders return map of cors used
+func (cc CorsConf) GetHeaders() map[string]string {
+	if !cc.Enabled {
+		return map[string]string{}
+	}
+
+	return map[string]string{
+		"Origin":  cc.Origin,
+		"Methods": cc.Methods,
+		"Headers": cc.Headers,
+	}
+}
+
+// InBrowserCacheConf Used to handle browser cache
+type InBrowserCacheConf struct {
+	Enabled bool `env:"ENABLED" envDefault:"false"`
+	// Cache max age in secs(use browser cache)
+	MaxAge time.Duration `env:"MAX_AGE" envDefault:"720h"`
+	Etag   int64
+}
+
+// InitEtag use current epoc to config etag
+func (chc *InBrowserCacheConf) InitEtag() int64 {
+	chc.Etag = time.Now().Unix()
+	return chc.Etag
 }
 
 // TransConf transaction server connection.
@@ -60,11 +97,12 @@ type TransConf struct {
 
 // Config holds all configuration for the service
 type Config struct {
-	Trans          TransConf      `env:"TRANS_"`
-	ServiceConf    ServiceConf    `env:"SERVICE_"`
-	PrometheusConf PrometheusConf `env:"PROMETHEUS_"`
-	LoggerConf     LoggerConf     `env:"LOGGER_"`
-	Runtime        RuntimeConfig  `env:"APP_"`
+	Trans              TransConf          `env:"TRANS_"`
+	PrometheusConf     PrometheusConf     `env:"PROMETHEUS_"`
+	LoggerConf         LoggerConf         `env:"LOGGER_"`
+	Runtime            RuntimeConfig      `env:"APP_"`
+	CorsConf           CorsConf           `env:"CORS_"`
+	InBrowserCacheConf InBrowserCacheConf `env:"BROWSER_CACHE_"`
 }
 
 // LoadFromEnv loads the config data from the environment variables

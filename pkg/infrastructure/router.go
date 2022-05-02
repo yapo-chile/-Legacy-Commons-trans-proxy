@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"net/http"
 	"net/http/pprof"
+	"time"
 
 	"github.com/gorilla/context"
 	"gitlab.com/yapo_team/legacy/commons/trans-proxy/pkg/interfaces/handlers"
@@ -12,10 +13,13 @@ import (
 
 // Route stands for an http endpoint description
 type Route struct {
-	Name    string
-	Method  string
-	Pattern string
-	Handler handlers.Handler
+	Name         string
+	Method       string
+	Pattern      string
+	Handler      handlers.Handler
+	UseCache     bool
+	RequestCache string
+	TimeCache    time.Duration
 }
 
 type routeGroups struct {
@@ -32,10 +36,12 @@ type Routes []routeGroups
 
 // RouterMaker gathers route and wrapper information to build a router
 type RouterMaker struct {
-	Logger        loggers.Logger
-	WrapperFuncs  []WrapperFunc
-	WithProfiling bool
-	Routes        Routes
+	Logger         loggers.Logger
+	WrapperFuncs   []WrapperFunc
+	WithProfiling  bool
+	Routes         Routes
+	Cors           handlers.Cors
+	InBrowserCache InBrowserCache
 }
 
 // NewRouter setups a Router based on the provided routes
@@ -45,7 +51,25 @@ func (maker *RouterMaker) NewRouter() http.Handler {
 		subRouter := router.PathPrefix(routeGroup.Prefix).Subrouter()
 		for _, route := range routeGroup.Groups {
 			hLogger := loggers.MakeJSONHandlerLogger(maker.Logger)
-			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger)
+			hInputHandler := NewInputHandler()
+			cache := &InBrowserCache{}
+			if route.UseCache {
+				cache = NewBrowserCache(
+					maker.InBrowserCache.Enabled,
+					maker.InBrowserCache.Etag,
+					maker.InBrowserCache.MaxAge,
+					route.TimeCache,
+				)
+			}
+
+			requestCache := &RequestCache{}
+			if ttl, err := time.ParseDuration(route.RequestCache); err == nil {
+				requestCache = NewRequestCacheHandler(int(ttl.Milliseconds()))
+			} else if route.RequestCache != "" {
+				maker.Logger.Error("provided cache time is invalid, endpoint: '%s', ttl: '%s'", route.Pattern, route.RequestCache)
+			}
+
+			handler := handlers.MakeJSONHandlerFunc(route.Handler, hLogger, hInputHandler, maker.Cors, cache, requestCache)
 			for _, wrapFunc := range maker.WrapperFuncs {
 				handler = wrapFunc(route.Pattern, handler)
 			}

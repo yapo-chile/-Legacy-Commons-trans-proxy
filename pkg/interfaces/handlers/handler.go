@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"reflect"
 
 	"github.com/Yapo/goutils"
-	mux "gopkg.in/gorilla/mux.v1"
 )
 
 // HandlerInput is a placeholder for whatever input a handler may need.
@@ -22,31 +20,104 @@ type InputGetter func() (HandlerInput, *goutils.Response)
 type Handler interface {
 	// Input should return a pointer to the struct that this handler will need
 	// to be filled with the user input for a request
-	Input() HandlerInput
+	Input(InputRequest) HandlerInput
 	// Execute is the actual handler code. The InputGetter can be used to retrieve
 	// the request's input at any time (or not at all).
 	Execute(InputGetter) *goutils.Response
 }
 
+// InputHandler defines what methods an input handler should have
+type InputHandler interface {
+	NewInputRequest(*http.Request) InputRequest
+	SetInputRequest(InputRequest, HandlerInput)
+	Input() (HandlerInput, *goutils.Response)
+}
+
+// InputRequest defines what methods an input handler should have
+type InputRequest interface {
+	Set(interface{}) TargetRequest
+}
+
+// TargetRequest defines what methods an output request should have
+type TargetRequest interface {
+	FromJSONBody() TargetRequest
+	FromRawBody() TargetRequest
+	FromPath() TargetRequest
+	FromQuery() TargetRequest
+	FromHeaders() TargetRequest
+	FromCookies() TargetRequest
+	FromForm() TargetRequest
+}
+
+// Cors methods to configure cache and cors
+type Cors interface {
+	// GetHeaders should return the map of headers using key > value format
+	GetHeaders() map[string]string
+}
+
+// Cache defube method to handle and validate cache
+type Cache interface {
+	Validate(w http.ResponseWriter, r *http.Request) bool
+}
+
+type RequestCacheHandler interface {
+	GetCache(input interface{}) (*goutils.Response, error)
+	SetCache(input interface{}, response *goutils.Response) error
+}
+
+const CACHESET string = " (cache set)"
+const FROMCACHE string = " (from cache)"
+
 // MakeJSONHandlerFunc wraps a Handler on a json-over-http context, returning
 // a standard http.HandlerFunc
-func MakeJSONHandlerFunc(h Handler, l JSONHandlerLogger) http.HandlerFunc {
-	jh := jsonHandler{handler: h, logger: l}
+func MakeJSONHandlerFunc(
+	h Handler,
+	l JSONHandlerLogger,
+	ih InputHandler,
+	crs Cors,
+	cache Cache,
+	cacheHandler RequestCacheHandler,
+) http.HandlerFunc {
+	jh := jsonHandler{handler: h, logger: l, inputHandler: ih, cors: crs, cache: cache, requestCache: cacheHandler}
 	return jh.run
 }
 
 // JSONHandlerLogger defines all the events a jsonHandler can report
 type JSONHandlerLogger interface {
 	LogRequestStart(r *http.Request)
-	LogRequestEnd(*http.Request, *goutils.Response)
+	LogRequestEnd(*http.Request, *goutils.Response, string)
 	LogRequestPanic(*http.Request, *goutils.Response, interface{})
 }
 
 // jsonHandler provides an http.HandlerFunc that reads its input and formats
 // its output as json
 type jsonHandler struct {
-	handler Handler
-	logger  JSONHandlerLogger
+	handler      Handler
+	logger       JSONHandlerLogger
+	inputHandler InputHandler
+	cors         Cors
+	cache        Cache
+	requestCache RequestCacheHandler
+}
+
+func (jh *jsonHandler) setupCors(w *http.ResponseWriter) {
+	for key, value := range jh.cors.GetHeaders() {
+		(*w).Header().Set("Access-Control-Allow-"+key, value)
+	}
+}
+
+// inputGetterCacheDecorator will decorate the input getter and will validate if a cache is
+// already set then returning it
+func (jh *jsonHandler) inputGetterCacheDecorator(input InputGetter, status *string) InputGetter {
+	decorator := func() (HandlerInput, *goutils.Response) {
+		requestInput, requestResponse := input()
+		if cachedResponse, err := jh.requestCache.GetCache(requestInput); err == nil {
+			*status = FROMCACHE
+			return requestInput, cachedResponse
+		}
+		return requestInput, requestResponse
+	}
+	return decorator
 }
 
 // run will prepare the input for the actual handler and format the response
@@ -54,24 +125,15 @@ type jsonHandler struct {
 // http.HandlerFunc
 func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	jh.logger.LogRequestStart(r)
+	jh.setupCors(&w)
 	// Default response
 	response := &goutils.Response{
 		Code: http.StatusInternalServerError,
 	}
 	// Function the request can call to retrieve its input
-	inputGetter := func() (HandlerInput, *goutils.Response) {
-		input := jh.handler.Input()
-		// Parse the get params
-		getParams := mux.Vars(r)
-		response = fillGet(getParams, input)
-		if response != nil {
-			return input, response
-		}
-
-		// Parse the body params
-		response = goutils.ParseJSONBody(r, &input)
-		return input, response
-	}
+	ri := jh.inputHandler.NewInputRequest(r)
+	input := jh.handler.Input(ri)
+	jh.inputHandler.SetInputRequest(ri, input)
 	// Format the output and send it down the writer
 	outputWriter := func() {
 		goutils.CreateJSON(response)
@@ -86,29 +148,21 @@ func (jh *jsonHandler) run(w http.ResponseWriter, r *http.Request) {
 	// Setup before calling the actual handler
 	defer outputWriter()
 	defer errorHandler()
-	// Do the Harlem Shake
-	response = jh.handler.Execute(inputGetter)
-	jh.logger.LogRequestEnd(r, response)
-}
 
-// fillGet set variables into the corresponding get param
-func fillGet(vars map[string]string, input interface{}) *goutils.Response {
-	v := reflect.ValueOf(input)
-	reflectedInput := reflect.Indirect(v)
-	// Only attempt to set writeable variables
-	if reflectedInput.IsValid() && reflectedInput.CanSet() && reflectedInput.Kind() == reflect.Struct {
-		// Recursively load inner struct fields
-		for i := 0; i < reflectedInput.NumField(); i++ {
-			if tag, ok := reflectedInput.Type().Field(i).Tag.Lookup("get"); ok {
-				reflectedInput.Field(i).Set(reflect.ValueOf(vars[tag]))
-			}
+	requestCacheStatus := ""
+
+	if jh.cache.Validate(w, r) {
+		response = &goutils.Response{
+			Code: http.StatusNotModified,
 		}
-		return nil
+	} else {
+		// Do the Harlem Shake
+		response = jh.handler.Execute(
+			jh.inputGetterCacheDecorator(jh.inputHandler.Input, &requestCacheStatus),
+		)
+		if err := jh.requestCache.SetCache(input, response); err == nil {
+			requestCacheStatus = CACHESET
+		}
 	}
-	return &goutils.Response{
-		Code: http.StatusBadRequest,
-		Body: goutils.GenericError{
-			ErrorMessage: "Is not a valid struct",
-		},
-	}
+	jh.logger.LogRequestEnd(r, response, requestCacheStatus)
 }

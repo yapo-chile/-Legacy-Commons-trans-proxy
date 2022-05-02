@@ -17,7 +17,7 @@ type healthRequestOutput struct {
 }
 
 // Input returns a fresh, empty instance of healthHandlerInput
-func (*HealthHandler) Input() HandlerInput {
+func (*HealthHandler) Input(ir InputRequest) HandlerInput {
 	return &healthHandlerInput{}
 }
 

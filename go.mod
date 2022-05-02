@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/Yapo/goutils v1.2.1-0.20180424210448-721ca4146b6a
 	github.com/Yapo/logger v0.0.0-20170328173756-91855e974718
+	github.com/anevsky/cachego v0.0.0-20170305195447-977d3faf0e5b
 	github.com/eapache/go-resiliency v1.0.1-0.20180101203313-ef9aaa7ea8bd
 	github.com/gorilla/context v1.1.1
 	github.com/prometheus/client_golang v0.9.3-0.20190123153945-d5f63107bfca

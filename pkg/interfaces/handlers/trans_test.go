@@ -213,7 +213,7 @@ func TestTransHandlerExecuteUnauthorized(t *testing.T) {
 	getter := MakeMockInputTransGetter(&input, nil)
 	r := h.Execute(getter)
 	assert.Equal(t, expectedResponse, r)
-
+	mTokenVal.AssertExpectations(t)
 	m.AssertExpectations(t)
 }
 
